@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name — Hardware Engineer</title>
+  <meta name="description" content="Computer Engineering student specializing in hardware design, FPGAs, and embedded systems." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #00c878;
+      --green-dim: rgba(0,200,120,0.15);
+      --green-faint: rgba(0,200,120,0.04);
+      --bg: #0a0c0f;
+      --surface: rgba(255,255,255,0.025);
+      --border: rgba(255,255,255,0.07);
+      --text: #c8d0d8;
+      --text-muted: #5a6a74;
+      --text-bright: #e0e8f0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* PCB grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0,200,120,0.025) 1px, transparent 1px),
+        linear-gradient(rgba(0,200,120,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0 20px;
+      border-bottom: 1px solid var(--green-dim);
+      margin-bottom: 80px;
+    }
+
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 0.08em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--green); }
+
+    /* ── Hero ── */
+    .hero { margin-bottom: 100px; }
+
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 300;
+      line-height: 1.08;
+      color: var(--text-bright);
+      margin-bottom: 20px;
+    }
+
+    h1 strong { font-weight: 500; }
+
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    .cta-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+    .btn-primary, .btn-secondary {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      padding: 11px 22px;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #0a0c0f;
+      font-weight: 600;
+    }
+    .btn-primary:hover { background: #00e890; }
+
+    .btn-secondary {
+      border: 1px solid var(--green-dim);
+      color: var(--green);
+    }
+    .btn-secondary:hover { background: var(--green-faint); border-color: var(--green); }
+
+    /* ── Section header ── */
+    .section-head {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 0.18em;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .section-head::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--green-dim);
+    }
+
+    /* ── About ── */
+    .about {
+      margin-bottom: 100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .about-text h2 {
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--text-bright);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .about-text p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .contact-grid {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .contact-item:last-child { border-bottom: none; }
+
+    .contact-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 0.1em;
+      min-width: 60px;
+    }
+
+    .contact-value { color: var(--text-muted); }
+    .contact-value a { color: var(--text-muted); text-decoration: none; }
+    .contact-value a:hover { color: var(--green); }
+
+    /* ── Projects ── */
+    .projects { margin-bottom: 100px; }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 28px;
+      transition: border-color 0.2s, background 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-card:hover {
+      border-color: rgba(0,200,120,0.35);
+      background: rgba(0,200,120,0.03);
+    }
+
+    .project-type {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+    }
+
+    .project-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-bright);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      flex: 1;
+      margin-bottom: 18px;
+    }
+
+    .project-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 2px;
+    }
+
+    .project-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--green);
+      text-decoration: none;
+      white-space: nowrap;
+      padding-left: 12px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .project-link:hover { opacity: 1; }
+
+    /* ── Skills ── */
+    .skills { margin-bottom: 100px; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .skill-group {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 22px;
+    }
+
+    .skill-group-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 0.14em;
+      margin-bottom: 14px;
+    }
+
+    .skill-list { list-style: none; }
+
+    .skill-list li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .skill-list li:last-child { border-bottom: none; }
+
+    .skill-list li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: rgba(0,200,120,0.4);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: #2a3a44;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+    }
+
+    .footer-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: #3a4a54;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--green); }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      nav { flex-direction: column; gap: 16px; }
+      .about { grid-template-columns: 1fr; }
+      .project-grid { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+    }
+
+    @media (max-width: 420px) {
+      .skills-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ── Navigation ── -->
+  <nav>
+    <div class="logo">YOUR_NAME</div>
+    <ul class="nav-links">
+      <li><a href="#about">about</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="resume.pdf" target="_blank">resume</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <p class="eyebrow">// Computer Engineering Student · Hardware Focus</p>
+    <h1>Building things<br>at the <strong>silicon</strong> level.</h1>
+    <p class="hero-sub">
+      I design and prototype digital systems — from RTL logic to PCB layout — with a focus on
+      low-level hardware engineering. Currently studying Computer Engineering at [Your University].
+    </p>
+    <div class="cta-row">
+      <a class="btn-primary" href="#projects">See my projects</a>
+      <a class="btn-secondary" href="resume.pdf" target="_blank">Download resume →</a>
+    </div>
+  </section>
+
+  <!-- ── About ── -->
+  <section class="about" id="about">
+    <div class="about-text">
+      <div class="section-head">01 / ABOUT</div>
+      <h2>Hardware engineer in the making.</h2>
+      <p>
+        I'm a [Year, e.g. Junior] studying Computer Engineering at [Your University], with a focus
+        on digital design and hardware development. I'm passionate about the intersection of
+        software and silicon.
+      </p>
+      <p>
+        My coursework and projects span RTL design, embedded systems, and PCB development. I love
+        working at the layer where code meets physical circuits.
+      </p>
+      <p>
+        Currently looking for internships and co-ops in hardware engineering, VLSI design,
+        or embedded systems for [Semester/Year].
+      </p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <span class="contact-label">EMAIL</span>
+        <span class="contact-value"><a href="mailto:you@university.edu">you@university.edu</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">GITHUB</span>
+        <span class="contact-value"><a href="https://github.com/yourusername" target="_blank">github.com/yourusername</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">LINKEDIN</span>
+        <span class="contact-value"><a href="https://linkedin.com/in/yourname" target="_blank">linkedin.com/in/yourname</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">SCHOOL</span>
+        <span class="contact-value">Your University, Class of 20XX</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">GPA</span>
+        <span class="contact-value">X.XX / 4.00</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Projects ── -->
+  <section class="projects" id="projects">
+    <div class="section-head">02 / PROJECTS</div>
+    <div class="project-grid">
+
+      <!-- Project 1 — replace with your real projects -->
+      <div class="project-card">
+        <div class="project-type">FPGA · RTL DESIGN</div>
+        <div class="project-title">Project Title Here</div>
+        <p class="project-desc">
+          Describe what you built and why. What problem did it solve? What was technically
+          interesting about it? Keep it to 2–3 sentences.
+        </p>
+        <div class="project-footer">
+          <div class="tags">
+            <span class="tag">Verilog</span>
+            <span class="tag">Vivado</span>
+            <span class="tag">Xilinx</span>
+          </div>
+          <a class="project-link" href="https://github.com/yourusername/project" target="_blank">repo →</a>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card">
+        <div class="project-type">PCB · HARDWARE DESIGN</div>
+        <div class="project-title">Another Project Title</div>
+        <p class="project-desc">
+          What did you design and build? Include any notable outcomes — like board rev count,
+          protocols used, or what the final product accomplished.
+        </p>
+        <div class="project-footer">
+          <div class="tags">
+            <span class="tag">KiCad</span>
+            <span class="tag">STM32</span>
+            <span class="tag">I2C</span>
+          </div>
+          <a class="project-link" href="https://github.com/yourusername/project2" target="_blank">repo →</a>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="project-card">
+        <div class="project-type">EMBEDDED · C</div>
+        <div class="project-title">Embedded System Project</div>
+        <p class="project-desc">
+          Microcontroller firmware, real-time control, sensor interfacing — describe what your
+          embedded project did and the challenges you solved.
+        </p>
+        <div class="project-footer">
+          <div class="tags">
+            <span class="tag">C</span>
+            <span class="tag">ARM</span>
+            <span class="tag">UART</span>
+          </div>
+          <a class="project-link" href="https://github.com/yourusername/project3" target="_blank">repo →</a>
+        </div>
+      </div>
+
+      <!-- Project 4 — coursework is totally valid! -->
+      <div class="project-card">
+        <div class="project-type">COURSEWORK · LAB</div>
+        <div class="project-title">Class Lab or Capstone</div>
+        <p class="project-desc">
+          Coursework counts — especially if you went beyond the minimum. Describe the lab objective
+          and what you did that showed depth or initiative.
+        </p>
+        <div class="project-footer">
+          <div class="tags">
+            <span class="tag">LTspice</span>
+            <span class="tag">Multisim</span>
+          </div>
+          <!-- Remove this link or leave it pointing to a write-up -->
+          <a class="project-link" href="#" target="_blank">write-up →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Skills ── -->
+  <section class="skills" id="skills">
+    <div class="section-head">03 / SKILLS</div>
+    <div class="skills-grid">
+
+      <div class="skill-group">
+        <div class="skill-group-name">HDL / DIGITAL</div>
+        <ul class="skill-list">
+          <li>Verilog</li>
+          <li>SystemVerilog</li>
+          <li>VHDL</li>
+          <li>FPGA Design</li>
+          <li>RTL Simulation</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-group-name">EMBEDDED SYSTEMS</div>
+        <ul class="skill-list">
+          <li>C / C++</li>
+          <li>ARM Cortex-M</li>
+          <li>RTOS basics</li>
+          <li>SPI / I2C / UART</li>
+          <li>Bare-metal programming</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-group-name">EDA & TOOLS</div>
+        <ul class="skill-list">
+          <li>KiCad / Altium</li>
+          <li>Vivado / Quartus</li>
+          <li>LTspice / SPICE</li>
+          <li>Oscilloscope / Logic Analyzer</li>
+          <li>Git / Linux</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-group-name">HARDWARE</div>
+        <ul class="skill-list">
+          <li>PCB Layout</li>
+          <li>Schematic Capture</li>
+          <li>Signal Integrity basics</li>
+          <li>Power electronics</li>
+          <li>Soldering / Rework</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-group-name">PROGRAMMING</div>
+        <ul class="skill-list">
+          <li>Python</li>
+          <li>Assembly (x86 / ARM)</li>
+          <li>MATLAB</li>
+          <li>Bash / scripting</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-group-name">COURSES</div>
+        <ul class="skill-list">
+          <li>Digital Logic Design</li>
+          <li>Computer Architecture</li>
+          <li>Signals & Systems</li>
+          <li>Embedded Systems</li>
+          <li>VLSI Design</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-left">© 2025 Your Name</div>
+    <div class="footer-links">
+      <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/yourname" target="_blank">LinkedIn</a>
+      <a href="resume.pdf" target="_blank">Resume PDF</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
