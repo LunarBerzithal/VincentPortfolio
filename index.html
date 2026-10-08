@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vincent Zhu | Computer Engineering Portfolio</title>
+<meta name="description" content="Computer engineering resume and projects of Vincent Zhu, presented as a circuit board.">
+<meta property="og:title" content="Vincent Zhu | Computer Engineering Portfolio">
+<meta property="og:description" content="Boot the board to explore projects, a resume formatted as a datasheet, and contact pins.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔌</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pcb:#062b21; --board:#0a3d2e; --trace:#1f7a5c; --silk:#e9f5ee; --dim:#8fb8a5;
+  --copper:#e0a04a; --led:#7dff9b; --warn:#ff6b57; --ink:#03130e;
+  --head:'Silkscreen',ui-monospace,monospace; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:var(--pcb);color:var(--silk);font:16px/1.55 var(--mono);
+  background-image:radial-gradient(circle,var(--trace) 1.5px,transparent 2px);background-size:28px 28px;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+h1,h2,h3,button,.sil{font-family:var(--head);font-weight:400;letter-spacing:.04em}
+a{color:var(--copper)}
+:focus-visible{outline:3px solid var(--led);outline-offset:3px}
+.screen{display:none;min-height:100%;padding:24px 16px;max-width:980px;margin:0 auto}
+.screen.on{display:flex;flex-direction:column}
+.box{background:var(--board);border:2px solid var(--copper);border-radius:2px;padding:18px;position:relative}
+.box::before,.box::after{content:"";position:absolute;width:10px;height:10px;border-radius:50%;background:var(--pcb);border:2px solid var(--copper);top:6px;left:6px}
+.box::after{left:auto;right:6px}
+.btn{font-size:14px;color:var(--ink);background:var(--copper);border:0;padding:12px 18px;cursor:pointer;border-radius:2px;text-decoration:none;display:inline-block}
+.btn:hover{background:#f0b865}.btn:active{transform:translateY(2px)}
+.btn.ghost{background:transparent;color:var(--silk);border:2px solid var(--dim)}
+svg.chip{display:block;shape-rendering:geometricPrecision}
+
+/* boot */
+#boot{align-items:center;justify-content:center;gap:22px}
+#boot h1{font-size:clamp(24px,6.5vw,52px);margin:0;line-height:1.15;text-align:center}
+#post{width:min(520px,100%);min-height:7.5em;margin:0;color:var(--led);font-size:15px;white-space:pre-wrap}
+.bar{width:min(520px,100%);height:18px;border:2px solid var(--dim);padding:2px;display:flex;gap:3px}
+.bar i{flex:1;background:transparent}.bar i.f{background:var(--led)}
+#start{display:none}#start.on{display:inline-block;animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.5}}
+
+/* hub */
+#hub{gap:22px}
+#hub h2{font-size:clamp(16px,3.6vw,22px);margin:6px 0 0;text-align:center}
+.sub{text-align:center;color:var(--dim);margin:-10px 0 0}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.pick{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:var(--silk);font:inherit;cursor:pointer}
+.pick:hover,.pick:focus-visible{border-color:var(--led)}
+.pick:hover .pwr,.pick:focus-visible .pwr{fill:var(--led)}
+.pick h3{font-size:15px;margin:0;color:var(--copper)}
+.pick p{margin:0;color:var(--dim);font-size:14px}
+.pick svg{width:150px;height:135px}
+.hint{text-align:center;color:var(--dim);margin:auto 0 0;font-size:14px}
+
+/* panel */
+#panel{gap:18px}
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top h2{font-size:clamp(14px,3vw,20px);margin:0;color:var(--copper)}
+.term{background:var(--ink);border-color:var(--trace);cursor:pointer;font-size:15px}
+.term .who{color:var(--dim);font-size:11px;margin-bottom:6px}
+#say{margin:0;min-height:3.4em;color:var(--led)}
+#say::before{content:"> ";color:var(--dim)}
+#say.typing::after{content:"▮";animation:blink .6s steps(2) infinite}
+
+.proj{width:100%;text-align:left;color:var(--silk);font:inherit;display:block;margin-bottom:14px;cursor:pointer}
+.proj:hover,.proj[aria-expanded=true]{border-color:var(--led)}
+.ph{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.ph b{font:400 15px var(--head);color:var(--copper)}
+.badge{font:700 11px var(--head);padding:4px 8px;color:var(--ink)}
+.live{background:var(--led)}.done{background:var(--dim)}.wip{background:var(--warn)}
+.pb{display:none;margin-top:12px;padding-top:12px;border-top:2px dashed var(--trace)}
+.proj[aria-expanded=true] .pb{display:block}
+.pb p{margin:0 0 10px}
+.lbl{font:400 12px var(--head);color:var(--led);margin-top:12px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+.tags span{border:1px solid var(--dim);padding:2px 8px;font-size:13px;border-radius:2px}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+.pb .btn{font-size:12px;padding:9px 14px}
+
+.sec{font:400 13px var(--head);color:var(--led);margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--trace)}
+.sec:first-child{margin-top:0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--trace);vertical-align:top}
+th{font:400 12px var(--head);color:var(--copper);white-space:nowrap}
+td ul{margin:0;padding-left:18px}
+.tw{overflow-x:auto}
+.reg{display:grid;grid-template-columns:150px 1fr 64px;gap:12px;align-items:center;margin-bottom:8px;font-size:14px}
+.meter{height:14px;border:2px solid var(--dim);padding:1px;display:flex;gap:2px}
+.meter i{flex:1}.meter i.f{background:var(--copper)}
+.pin{display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:center;margin-bottom:12px}
+.pin span{font:400 12px var(--head);color:var(--ink);background:var(--copper);padding:8px;text-align:center}
+.pin a{color:var(--silk);overflow-wrap:anywhere}
+footer{text-align:center;color:var(--dim);font-size:13px;padding:20px 0 8px}
+@media(max-width:560px){.reg{grid-template-columns:1fr 1fr}.reg .meter{grid-column:1/3}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <section id="boot" class="screen on">
+    <h1 id="b-name">YOUR NAME</h1>
+    <div class="sil" id="b-role" style="color:var(--copper);text-align:center">Computer Engineering</div>
+    <pre id="post" aria-live="polite"></pre>
+    <div class="bar" aria-hidden="true" id="bar"></div>
+    <button class="btn" id="start" type="button">Press to boot</button>
+  </section>
+
+  <section id="hub" class="screen">
+    <h2>Select a component</h2>
+    <p class="sub">Each chip opens a different part of my portfolio.</p>
+    <div class="chips" id="chips"></div>
+    <p class="hint">Press Esc inside any page to return to the board.</p>
+    <footer id="foot"></footer>
+  </section>
+
+  <section id="panel" class="screen">
+    <div class="top"><button class="btn ghost" id="back" type="button">Back</button><h2 id="ptitle"></h2></div>
+    <div class="box term" id="term" title="Click to skip typing"><div class="who sil" id="who"></div><p id="say"></p></div>
+    <div class="box" id="content"></div>
+  </section>
+</main>
+
+<script>
+/* ============ EDIT YOUR CONTENT HERE ============ */
+const DATA = {
+  name: "VINCENT ZHU",
+  role: "Computer Engineering · Stevens Institute of Technology",
+  email: "vzhu64@icloud.com",
+  resumePdf: "resume.pdf",   // put your PDF next to index.html
+  links: [
+    {label:"LinkedIn", url:"https://www.linkedin.com/in/vincentzhu1/"}
+    // add GitHub later: {label:"GitHub", url:"https://github.com/yourname"}
+  ],
+  about: "Computer engineering student at Stevens Institute of Technology (expected May 2029). I build embedded systems with ESP32 and Arduino, from sensors to motor control. Available to work January to May 2027.",
+  projects: [
+    {title:"Obstacle-Avoiding Robot", status:"done", blurb:"Autonomous robot that drives to a target point and avoids obstacles. Jan to May 2026, team of 3.",
+     problem:"Build a robot that navigates to a designated point while detecting and avoiding obstacles in real time.",
+     result:"Finished the robot and was accepted to a contest offered for the project. Built the chassis and assembled it without a breadboard.",
+     stack:["C++","Ultrasonic sensors","Motor control","Team of 3"], demo:"", code:""},
+    {title:"Automatic Plant Watering System", status:"done", blurb:"ESP32 system that waters a plant when the soil gets dry. Sep to Dec 2025, team of 3.",
+     problem:"Water plants automatically without over-watering them.",
+     result:"Calibrated the sensor to prevent over-watering and tested reliability over a one-week period.",
+     stack:["ESP32","MQTT","Soil moisture sensor","Water pump"], demo:"", code:""}
+  ],
+  experience: [
+    {rev:"2024 to now", role:"Cook", org:"Panda Express, Bayonne NJ", points:["Served as Person in Charge on multiple occasions, running store operations and staff when no manager was present.","Trained 8 new kitchen staff on food prep, safety and equipment.","Helped managers with inventory counts and ordering, reducing stock discrepancies."]},
+    {rev:"2021 to 2024", role:"Customer Service", org:"Panda Express, Bayonne NJ", points:["Handled 50+ orders per shift accurately in a fast-paced environment.","Processed cash, credit and mobile payments with zero discrepancies."]}
+  ],
+  education: [{degree:"B.E. Computer Engineering", org:"Stevens Institute of Technology", when:"Expected May 2029", note:"GPA 3.0+. Coursework: Digital Logic Design, Calculus, Physics, Circuits and Systems, Computational Data Structures and Algorithms. Member of the Stevens Technical Enrichment Program (STEP)."}],
+  skills: [
+    {group:"Hardware", items:["Arduino","ESP32","Moisture sensors","Ultrasonic sensors","PC building","Mechanical keyboards","Automotive repair"]},
+    {group:"Languages", items:["Java","Python","C++","C"]},
+    {group:"Software", items:["VS Code","SOLIDWORKS","FLASHFORGE","Arduino IDE"]},
+    {group:"Spoken", items:["English (fluent)","Mandarin Chinese (intermediate)"]}
+  ]
+};
+/* ============ END OF CONTENT ============ */
+
+const $ = s => document.querySelector(s);
+const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+const statusLabel = {live:"DEPLOYED", done:"ARCHIVED", wip:"IN PROGRESS"};
+
+/* IC package drawn in SVG */
+function chip(label, accent){
+  let p="";
+  for(let i=0;i<6;i++){
+    const o=40+i*12, q=34+i*12;
+    p+=`<rect x="${o}" y="10" width="5" height="14" fill="#c9ced1"/><rect x="${o}" y="96" width="5" height="14" fill="#c9ced1"/>
+        <rect x="26" y="${q+10}" width="14" height="5" fill="#c9ced1"/><rect x="100" y="${q+10}" width="14" height="5" fill="#c9ced1"/>`;
+  }
+  return `<svg class="chip" viewBox="0 0 140 120" role="img" aria-hidden="true">${p}
+    <rect x="38" y="22" width="64" height="76" rx="3" fill="#15191b" stroke="${accent}" stroke-width="2"/>
+    <circle class="pwr" cx="48" cy="32" r="3.5" fill="#33423b"/>
+    <text x="70" y="64" text-anchor="middle" font-family="Silkscreen,monospace" font-size="13" fill="${accent}">${label}</text>
+    <text x="70" y="82" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8fb8a5">REV A</text></svg>`;
+}
+const PARTS = [
+  {id:"projects", name:"Project Board", sub:"Projects", tag:"PROJ", color:"#e0a04a", who:"U1 · PROJECT BOARD",
+   say:()=>`${DATA.projects.length} builds on this board. Select one to read its problem, result and stack.`},
+  {id:"datasheet", name:"Datasheet", sub:"Resume", tag:"CV", color:"#7dff9b", who:"U2 · DATASHEET",
+   say:()=>`${DATA.name}. Revision history, education, and components and tools. PDF copy at the bottom.`},
+  {id:"io", name:"I/O Header", sub:"About & contact", tag:"I/O", color:"#6ec6ff", who:"J1 · I/O HEADER",
+   say:()=>DATA.about}
+];
+
+const views = {
+  projects: () => DATA.projects.map((p,i)=>`
+    <button class="box proj" aria-expanded="false">
+      <span class="ph"><b>${p.title}</b><span class="badge ${p.status}">${statusLabel[p.status]||""}</span></span>
+      <span>${p.blurb}</span>
+      <span class="pb">
+        <p class="lbl">PROBLEM</p><p>${p.problem}</p>
+        <p class="lbl">RESULT</p><p>${p.result}</p>
+        <span class="tags">${p.stack.map(s=>`<span>${s}</span>`).join("")}</span>
+        <span class="links">
+          ${p.demo?`<a class="btn" href="${p.demo}" target="_blank" rel="noopener">Live demo</a>`:""}
+          ${p.code?`<a class="btn ghost" href="${p.code}" target="_blank" rel="noopener">Source code</a>`:""}
+        </span>
+      </span>
+    </button>`).join(""),
+  datasheet: () => `
+    <h3 class="sec">Revision history</h3>
+    <div class="tw"><table><tr><th>Rev</th><th>Role</th><th>Notes</th></tr>
+    ${DATA.experience.map(j=>`<tr><td>${j.rev}</td><td><b>${j.role}</b><br>${j.org}</td><td><ul>${j.points.map(x=>`<li>${x}</li>`).join("")}</ul></td></tr>`).join("")}</table></div>
+    <h3 class="sec">Education</h3>
+    <div class="tw"><table>${DATA.education.map(e=>`<tr><td><b>${e.degree}</b><br>${e.org}<br>${e.when}</td><td>${e.note||""}</td></tr>`).join("")}</table></div>
+    <h3 class="sec">Components and tools</h3>
+    ${DATA.skills.map(g=>`<div class="lbl">${g.group}</div><div class="tags">${g.items.map(i=>`<span>${i}</span>`).join("")}</div>`).join("")}
+    <p style="margin-top:24px"><a class="btn" href="${DATA.resumePdf}" target="_blank" rel="noopener">Download PDF</a></p>`,
+  io: () => `
+    <h3 class="sec">Pin configuration</h3>
+    <div class="pin"><span>PIN 1</span><a href="mailto:${DATA.email}">${DATA.email}</a></div>
+    ${DATA.links.map((l,i)=>`<div class="pin"><span>PIN ${i+2}</span><a href="${l.url}" target="_blank" rel="noopener">${l.label}: ${l.url.replace(/^https?:\/\//,"")}</a></div>`).join("")}`
+};
+
+let typer, full="";
+function say(text){
+  clearInterval(typer); full=text; const el=$("#say"); el.textContent="";
+  if(reduce){el.textContent=text;return}
+  let i=0; el.classList.add("typing");
+  typer=setInterval(()=>{el.textContent=text.slice(0,++i); if(i>=text.length){clearInterval(typer);el.classList.remove("typing")}},16);
+}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));scrollTo(0,0)}
+function openPart(g){
+  $("#ptitle").textContent=g.name; $("#who").textContent=g.who; $("#content").innerHTML=views[g.id]();
+  show("panel"); say(g.say()); $("#back").focus(); location.hash=g.id;
+}
+function home(){clearInterval(typer);show("hub");history.replaceState(null,"",location.pathname+location.search)}
+
+document.title=`${DATA.name} | Computer Engineering Portfolio`;
+$("#b-name").textContent=DATA.name; $("#b-role").textContent=DATA.role;
+$("#foot").textContent=`© ${new Date().getFullYear()} ${DATA.name}`;
+$("#chips").innerHTML=PARTS.map(g=>`<button class="box pick" data-id="${g.id}">${chip(g.tag,g.color)}<h3>${g.name}</h3><p>${g.sub}</p></button>`).join("");
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".pick"); if(b) openPart(PARTS.find(g=>g.id===b.dataset.id))});
+$("#content").addEventListener("click",e=>{const q=e.target.closest(".proj"); if(!q||e.target.closest("a")) return; q.setAttribute("aria-expanded",q.getAttribute("aria-expanded")!=="true")});
+$("#term").addEventListener("click",()=>{clearInterval(typer);$("#say").textContent=full;$("#say").classList.remove("typing")});
+$("#back").addEventListener("click",home);
+addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#panel").classList.contains("on"))home()});
+$("#start").addEventListener("click",()=>{show("hub");const h=PARTS.find(g=>"#"+g.id===location.hash);if(h)openPart(h)});
+
+/* power-on self test */
+const bar=$("#bar"); bar.innerHTML="<i></i>".repeat(20);
+const steps=["[ OK ] power rails stable","[ OK ] clock locked at 100 MHz","[ OK ] memory test passed","[ OK ] loading portfolio.bin","Ready."];
+let n=0;
+function tick(){
+  $("#post").textContent=steps.slice(0,n+1).join("\n");
+  [...bar.children].forEach((c,i)=>c.classList.toggle("f",i<(n+1)*4));
+  if(++n<steps.length) setTimeout(tick,reduce?0:380); else {$("#start").classList.add("on");$("#start").focus()}
+}
+tick();
+</script>
+</body>
+</html>
